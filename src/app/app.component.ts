@@ -7,89 +7,72 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  userForm: FormGroup
-  formErrors = {
-    'email': '',
-    'name': '',
-    'secondName': '',
-    'phone': '',
-    'adress': ''
-  };
-  requiredMessage = 'Это обязательное поле'
-  validationMessages = {
-        email: {
-            required: this.requiredMessage,
-            pattern: 'Не верный формат email'
-        },
-        name: {
-            required: this.requiredMessage,
-            pattern: 'Только буквы и числа. Длина от 2-х до 25 знаков'
-        },
-        secondName: {
-            required: this.requiredMessage,
-            pattern: 'Только буквы и числа. Длина от 2-х до 25 знаков'
-        },
-        phone: {
-            required: this.requiredMessage,
-            pattern: 'Не верный формат телефона'
-        },
-        adress: {
-          required: this.requiredMessage,
-          minlength: 'Не менее 2-х символов!',
-          maxlength: 'Не более 200 символов!'
-        }
-}
+  genresForm: FormGroup
+  ageCheckForm: FormGroup  
+  questionForm: FormGroup
+  genres: Array<string> = [
+    'Комедия',
+    'Мультфильмы',
+    'Ужасы'
+  ]
+  restricted: boolean
+  success: boolean
+  message: string
   constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.buildUserForm()
+    this.buildGenresForm()
   }
 
-  buildUserForm() {
-    this.userForm = this.fb.group({
-      email: ['', [
-        Validators.required,
-        Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$')
-      ]],
-      name: ['', [
-        Validators.required,
-        Validators.pattern('[a-zA-Z0-9]{2,25}$')
-      ]],
-      secondName: ['', [
-        Validators.required,
-        Validators.pattern('[a-zA-Z0-9]{2,25}$')
-      ]],
-      phone: [ '', [
-        Validators.required,
-        Validators.pattern('[0-9]{7,9}$')
-        
-      ]],
-      adress: ['', [
-        Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(200)
+  buildGenresForm() {
+    this.genresForm = this.fb.group({
+      genre: ['', [
+        Validators.required
       ]],
     })
-    this.userForm.valueChanges.subscribe(data => this.onValueChanged(data))
+    this.genresForm.valueChanges.subscribe(genre => {
+      if(genre.genre === 'Ужасы') {
+        this.genresForm = undefined
+        this.buildAgeCheckForm()
+      } else {
+        this.success = true
+        this.message = 'Доступ разрешен'
+        this.genresForm = undefined
+      }
+    })
   }
 
-  onValueChanged(data?: any) {
-    if (!this.userForm) { return; }
-    const form = this.userForm;
-    for (const field in this.formErrors) {
-      this.formErrors[field] = '';
-      const control = form.get(field);
- 
-      if (control && control.dirty && !control.valid) {
-        const messages = this.validationMessages[field];
-        for (const key in control.errors) {
-          this.formErrors[field] += messages[key] + ' ';
-        }
-      }
+  buildAgeCheckForm() {
+    this.ageCheckForm = this.fb.group({
+      age: ['', [
+        Validators.required
+      ]]
+    })
+  }
+
+  ageSubmit() {
+    console.log(this.ageCheckForm)
+    if(this.ageCheckForm.value.age < 18) {
+      this.restricted = true
+      this.message = 'Вы не можете просматривать этот контент'
+    } else {
+      this.ageCheckForm = undefined
+      this.buildQuestionForm()
     }
   }
 
-  submit() {
-    console.log(this.userForm)
+  buildQuestionForm() {
+    this.questionForm = this.fb.group({
+      vhs: ['', Validators.required]
+    })
+    this.questionForm.valueChanges.subscribe(answer => {
+      if(answer.vhs === 'video') {
+        this.success = true
+        this.message = 'Вы прошли проверку'
+      } else {
+        this.restricted = true
+        this.message = 'Ваш возраст не подтвержден'
+      }
+    })
   }
 }

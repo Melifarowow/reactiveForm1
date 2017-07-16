@@ -1,48 +1,46 @@
-<form [formGroup]="userForm" (ngSubmit)="submit()">
-  <md-card>
-    <md-card-title>
-      Вход
-    </md-card-title>
-    <md-card-content>
-      <md-input-container>
-        <input mdInput placeholder="Введите email" name="email" type="email"
-          formControlName="email">
-        <md-error *ngIf="formErrors.email">
-          {{formErrors.email}}
-        </md-error>
-      </md-input-container>
-      <md-input-container>
-        <input mdInput placeholder="Введите имя" name="name" type="text"
-          formControlName="name">
-        <md-error *ngIf="formErrors.name">
-          {{formErrors.name}}
-        </md-error>
-      </md-input-container>
-      <md-input-container>
-        <input mdInput placeholder="Введите фамилию" name="secondName" type="text"
-          formControlName="secondName">
-        <md-error *ngIf="formErrors.secondName">
-          {{formErrors.secondName}}
-        </md-error>
-      </md-input-container>
-      <md-input-container>
-        <span mdPrefix>+380 &nbsp;</span>
-        <input mdInput placeholder="Введите телефон" name="phone" type="text"
-          formControlName="phone">
-        <md-error *ngIf="formErrors.phone">
-          {{formErrors.phone}}
-        </md-error>
-      </md-input-container>
-      <md-input-container>
-        <textarea mdInput placeholder="Введите адрес" name="adress" formControlName="adress">
-        </textarea>
-        <md-error *ngIf="formErrors.adress">
-          {{formErrors.adress}}
-        </md-error>
-      </md-input-container>
-    </md-card-content>
-    <md-card-actions>
-      <button md-button type="submit" color="primary" [disabled]="userForm.invalid">Войти</button>
-    </md-card-actions>
-  </md-card>
-</form>
+<h1 *ngIf="restricted || success">{{message}}</h1>
+<div *ngIf="!restricted && !success">
+  <form *ngIf="genresForm" [formGroup]="genresForm">
+    <md-card>
+      <md-card-title>
+        Какой фильм вы хотите посмотреть?
+      </md-card-title>
+      <md-card-content>
+        <md-select placeholder="Выберите жанр фильма" formControlName="genre">
+          <md-option *ngFor="let genre of genres" [value]="genre">
+            {{ genre }}
+          </md-option>
+        </md-select>
+      </md-card-content>
+    </md-card>
+  </form>
+  <form *ngIf="ageCheckForm" [formGroup]="ageCheckForm" (ngSubmit)="ageSubmit()">
+    <md-card>
+      <md-card-title>
+        Сколько вам лет?
+      </md-card-title>
+      <md-card-content>
+        <md-input-container>
+          <input mdInput placeholder="Введите свой возраст" name="age" type="number"
+            formControlName="age">
+        </md-input-container>
+      </md-card-content>
+      <md-card-actions>
+        <button md-button>OK</button>
+      </md-card-actions>
+    </md-card>
+  </form>
+  <form *ngIf="questionForm" [formGroup]="questionForm">
+    <md-card>
+      <md-card-title>
+        Что такое VHS?
+      </md-card-title>
+      <md-card-content>
+        <md-radio-group formControlName="vhs">
+          <md-radio-button value="video">Видеокасета</md-radio-button>
+          <md-radio-button value="frame">Фреймворк</md-radio-button>
+        </md-radio-group>
+      </md-card-content>
+    </md-card>
+  </form>
+</div>
