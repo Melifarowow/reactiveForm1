@@ -1,0 +1,8 @@
+form {
+    max-width: 420px;
+    display: block;
+    margin: 0 auto;
+}
+md-input-container{
+    display: block;
+}
